@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(npx create-docusaurus@latest:*)",
+      "Bash(npx docusaurus build)"
+    ]
+  }
+}
