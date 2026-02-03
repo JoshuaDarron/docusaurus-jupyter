@@ -39,19 +39,25 @@ export default [
   },
   {
     path: '/docs',
-    component: ComponentCreator('/docs', 'aea'),
+    component: ComponentCreator('/docs', '2fb'),
     routes: [
       {
         path: '/docs',
-        component: ComponentCreator('/docs', '23e'),
+        component: ComponentCreator('/docs', '6b4'),
         routes: [
           {
             path: '/docs',
-            component: ComponentCreator('/docs', 'fbf'),
+            component: ComponentCreator('/docs', '333'),
             routes: [
               {
                 path: '/docs/intro',
                 component: ComponentCreator('/docs/intro', '61d'),
+                exact: true,
+                sidebar: "tutorialSidebar"
+              },
+              {
+                path: '/docs/notebooks/notebooks/data-exploration',
+                component: ComponentCreator('/docs/notebooks/notebooks/data-exploration', 'cee'),
                 exact: true,
                 sidebar: "tutorialSidebar"
               },

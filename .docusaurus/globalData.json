@@ -16,6 +16,11 @@
               "sidebar": "tutorialSidebar"
             },
             {
+              "id": "notebooks/notebooks/data-exploration",
+              "path": "/docs/notebooks/notebooks/data-exploration",
+              "sidebar": "tutorialSidebar"
+            },
+            {
               "id": "notebooks/notebooks/pipeline-basics",
               "path": "/docs/notebooks/notebooks/pipeline-basics",
               "sidebar": "tutorialSidebar"

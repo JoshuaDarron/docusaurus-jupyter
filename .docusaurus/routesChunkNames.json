@@ -42,22 +42,26 @@
       "plugin": "plugin---docusaurus-debugb-38-ad3"
     }
   },
-  "/docs-aea": {
+  "/docs-2fb": {
     "__comp": "__comp---theme-docs-root-5-e-9-0b6",
     "__context": {
       "plugin": "plugin---docsaba-d7c"
     }
   },
-  "/docs-23e": {
+  "/docs-6b4": {
     "__comp": "__comp---theme-doc-version-roota-7-b-5de",
     "__props": "__props---docs-005-788"
   },
-  "/docs-fbf": {
+  "/docs-333": {
     "__comp": "__comp---theme-doc-roota-94-67a"
   },
   "/docs/intro-61d": {
     "__comp": "__comp---theme-doc-item-178-a40",
     "content": "content---docs-intro-0-e-3-be1"
+  },
+  "/docs/notebooks/notebooks/data-exploration-cee": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-notebooks-notebooks-data-exploration-979-b54"
   },
   "/docs/notebooks/notebooks/pipeline-basics-c86": {
     "__comp": "__comp---theme-doc-item-178-a40",

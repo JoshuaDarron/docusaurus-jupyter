@@ -18,5 +18,9 @@
   "previous": {
     "title": "Pipeline Basics",
     "permalink": "/docs/notebooks/notebooks/pipeline-basics"
+  },
+  "next": {
+    "title": "Data Exploration",
+    "permalink": "/docs/notebooks/notebooks/data-exploration"
   }
 }
