@@ -5,8 +5,6 @@ title: Aparavi Pipeline Execution
 import PipelineResults from "@site/src/components/PipelineResults";
 import pipelineConfig from "@site/pipelines/pipeline-config.json";
 
-import pipelineResults from "@site/static/data/pipeline-results.json";
-
 This page demonstrates executing an Aparavi DTC pipeline end-to-end using the
 [Aparavi SDK](https://pypi.org/project/aparavi-dtc-sdk/). The pipeline ingests
 sample documents from Google Drive, parses them, splits the text into chunks,
@@ -21,17 +19,11 @@ The pipeline consists of four stages connected in sequence:
 3. **LangChain Chunker** — Splits text using `RecursiveCharacterTextSplitter` with a 512-character window
 4. **Response Output** — Collects the processed document chunks
 
-<PipelineResults config={pipelineConfig} results={pipelineResults} />
+<PipelineResults config={pipelineConfig} />
 
 ## Setup Instructions
 
-### 1. Install dependencies
-
-```bash
-pip install aparavi-dtc-sdk python-dotenv
-```
-
-### 2. Configure credentials
+### 1. Configure credentials
 
 Copy the example environment file and fill in your API key:
 
@@ -46,15 +38,17 @@ APARAVI_API_KEY=your-api-key-here
 APARAVI_BASE_URL=https://eaas.aparavi.com/
 ```
 
-### 3. Execute the pipeline
+### 2. Start the dev server
 
 ```bash
-python scripts/run_pipeline.py
+npm start
 ```
 
-This will call the Aparavi API, execute the pipeline workflow, and save the
-results to `static/data/pipeline-results.json`. Refresh this page to see the
-results displayed above.
+### 3. Execute the pipeline
+
+Click the **Execute Pipeline** button above. The pipeline runs directly against
+the Aparavi API (proxied through the dev server to avoid CORS issues) and
+displays results in real time.
 
 ## Pipeline Configuration
 

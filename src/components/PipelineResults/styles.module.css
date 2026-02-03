@@ -165,3 +165,99 @@
   border: 1px dashed var(--ifm-color-emphasis-300);
   border-radius: var(--ifm-code-border-radius);
 }
+
+/* Execute section */
+.executeSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: var(--ifm-leading);
+  padding: 16px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: var(--ifm-code-border-radius);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.executeButton {
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  color: var(--ifm-color-white);
+  background: var(--ifm-color-primary);
+  border: none;
+  border-radius: var(--ifm-code-border-radius);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.executeButton:hover:not(:disabled) {
+  background: var(--ifm-color-primary-dark);
+}
+
+.executeButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.cancelButton {
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  color: var(--ifm-color-white);
+  background: var(--ifm-color-danger);
+  border: none;
+  border-radius: var(--ifm-code-border-radius);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancelButton:hover {
+  background: var(--ifm-color-danger-dark);
+}
+
+/* Status bar */
+.statusBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.statusActive {
+  color: var(--ifm-color-primary);
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+.statusDone {
+  color: var(--ifm-color-success);
+}
+
+.statusError {
+  color: var(--ifm-color-danger);
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  border-top-color: var(--ifm-color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.errorMessage {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: var(--ifm-color-danger-darkest);
+  background: var(--ifm-color-danger-contrast-background);
+  border: 1px solid var(--ifm-color-danger);
+  border-radius: var(--ifm-code-border-radius);
+}

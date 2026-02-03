@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./styles.module.css";
+import useAparaviPipeline from "./useAparaviPipeline";
 
 const NODE_LABELS = {
   sample_google: "Google Drive Source",
@@ -13,6 +14,16 @@ const CLASS_STYLES = {
   data: styles.data,
   preprocessor: styles.preprocessor,
   infrastructure: styles.infrastructure,
+};
+
+const STATUS_LABELS = {
+  idle: "Ready",
+  validating: "Validating pipeline...",
+  executing: "Starting execution...",
+  polling: "Waiting for results...",
+  teardown: "Collecting results...",
+  done: "Complete",
+  error: "Failed",
 };
 
 function PipelineFlow({ components }) {
@@ -92,9 +103,22 @@ function ResultCard({ doc, index }) {
   );
 }
 
-export default function PipelineResults({ config, results }) {
+function StatusIndicator({ status }) {
+  const isActive = !["idle", "done", "error"].includes(status);
+  return (
+    <div className={`${styles.statusBar} ${isActive ? styles.statusActive : ""} ${status === "error" ? styles.statusError : ""} ${status === "done" ? styles.statusDone : ""}`}>
+      {isActive && <span className={styles.spinner} />}
+      {STATUS_LABELS[status] || status}
+    </div>
+  );
+}
+
+export default function PipelineResults({ config, results: staticResults }) {
   const pipeline = config || {};
   const components = pipeline.components || [];
+  const { status, results: liveResults, error, running, executePipeline, cancel } = useAparaviPipeline();
+
+  const results = liveResults || staticResults;
   const documents = results?.documents || results?.results || [];
 
   return (
@@ -105,6 +129,24 @@ export default function PipelineResults({ config, results }) {
       <h3>Stage Configuration</h3>
       <div className={styles.configSection}>
         <ConfigTable components={components} />
+      </div>
+
+      <div className={styles.executeSection}>
+        {running ? (
+          <button className={styles.cancelButton} onClick={cancel}>
+            Cancel
+          </button>
+        ) : (
+          <button
+            className={styles.executeButton}
+            onClick={() => executePipeline(config)}
+            disabled={status === "done" && !!liveResults}
+          >
+            Execute Pipeline
+          </button>
+        )}
+        {status !== "idle" && <StatusIndicator status={status} />}
+        {error && <div className={styles.errorMessage}>{error}</div>}
       </div>
 
       <h3>
@@ -118,8 +160,8 @@ export default function PipelineResults({ config, results }) {
       <div className={styles.resultsSection}>
         {!results ? (
           <div className={styles.noResults}>
-            No results yet. Run <code>python scripts/run_pipeline.py</code> to
-            execute the pipeline.
+            No results yet. Click <strong>Execute Pipeline</strong> above to run
+            the pipeline, or run <code>python scripts/run_pipeline.py</code> offline.
           </div>
         ) : documents.length > 0 ? (
           documents.map((doc, i) => <ResultCard key={i} doc={doc} index={i} />)

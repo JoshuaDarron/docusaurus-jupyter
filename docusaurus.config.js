@@ -1,4 +1,5 @@
 // @ts-check
+import 'dotenv/config';
 import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
@@ -15,6 +16,15 @@ const config = {
   baseUrl: '/',
 
   onBrokenLinks: 'throw',
+
+  customFields: {
+    APARAVI_API_KEY: process.env.APARAVI_API_KEY || '',
+    APARAVI_BASE_URL: process.env.APARAVI_BASE_URL || 'https://eaas.aparavi.com/',
+  },
+
+  plugins: [
+    './plugins/aparavi-proxy',
+  ],
 
   i18n: {
     defaultLocale: 'en',
