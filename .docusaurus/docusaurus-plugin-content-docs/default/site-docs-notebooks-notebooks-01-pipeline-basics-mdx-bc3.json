@@ -1,0 +1,26 @@
+{
+  "id": "notebooks/notebooks/pipeline-basics",
+  "title": "Pipeline Basics",
+  "description": "An AI pipeline is a sequence of processing steps that transform raw",
+  "source": "@site/docs/notebooks/notebooks/01-pipeline-basics.mdx",
+  "sourceDirName": "notebooks/notebooks",
+  "slug": "/notebooks/notebooks/pipeline-basics",
+  "permalink": "/docs/notebooks/notebooks/pipeline-basics",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "title": "Pipeline Basics"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Introduction",
+    "permalink": "/docs/intro"
+  },
+  "next": {
+    "title": "Pipeline Results",
+    "permalink": "/docs/notebooks/notebooks/pipeline-results"
+  }
+}

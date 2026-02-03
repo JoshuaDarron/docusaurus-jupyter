@@ -42,22 +42,30 @@
       "plugin": "plugin---docusaurus-debugb-38-ad3"
     }
   },
-  "/docs-393": {
+  "/docs-aea": {
     "__comp": "__comp---theme-docs-root-5-e-9-0b6",
     "__context": {
       "plugin": "plugin---docsaba-d7c"
     }
   },
-  "/docs-97a": {
+  "/docs-23e": {
     "__comp": "__comp---theme-doc-version-roota-7-b-5de",
     "__props": "__props---docs-005-788"
   },
-  "/docs-7fc": {
+  "/docs-fbf": {
     "__comp": "__comp---theme-doc-roota-94-67a"
   },
   "/docs/intro-61d": {
     "__comp": "__comp---theme-doc-item-178-a40",
     "content": "content---docs-intro-0-e-3-be1"
+  },
+  "/docs/notebooks/notebooks/pipeline-basics-c86": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-notebooks-notebooks-pipeline-basicsbc-3-a67"
+  },
+  "/docs/notebooks/notebooks/pipeline-results-9eb": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-notebooks-notebooks-pipeline-resultsf-32-52a"
   },
   "/-2e1": {
     "__comp": "__comp---site-src-pages-index-jsc-4-f-f99",

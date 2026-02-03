@@ -1,0 +1,164 @@
+---
+title: Pipeline Results
+---
+
+
+
+
+export const quartoRawHtml =
+[`<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+`,`
+<table class="dataframe" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr style="text-align: right;">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Step</th>
+<th data-quarto-table-cell-role="th">Status</th>
+<th data-quarto-table-cell-role="th">Duration (s)</th>
+<th data-quarto-table-cell-role="th">Output Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-quarto-table-cell-role="th">0</td>
+<td>load_documents</td>
+<td>success</td>
+<td>1.20</td>
+<td>Loaded 42 documents (3.1 MB)</td>
+</tr>
+<tr>
+<td data-quarto-table-cell-role="th">1</td>
+<td>chunk_text</td>
+<td>success</td>
+<td>0.85</td>
+<td>Created 187 chunks (avg 512 tokens)</td>
+</tr>
+<tr>
+<td data-quarto-table-cell-role="th">2</td>
+<td>embed_chunks</td>
+<td>success</td>
+<td>4.30</td>
+<td>Generated 187 embeddings (dim=1536)</td>
+</tr>
+<tr>
+<td data-quarto-table-cell-role="th">3</td>
+<td>retrieve_context</td>
+<td>success</td>
+<td>0.12</td>
+<td>Retrieved top 5 chunks (score &gt;= 0.82)</td>
+</tr>
+<tr>
+<td data-quarto-table-cell-role="th">4</td>
+<td>generate_answer</td>
+<td>success</td>
+<td>2.40</td>
+<td>Generated answer (148 tokens)</td>
+</tr>
+</tbody>
+</table>
+`,`
+</div>`];
+
+After a pipeline run completes, each step records its **status**,
+**duration**, and a summary of its output. This page demonstrates how to
+inspect those results.
+
+## Run Results Table
+
+The results table provides a per-step breakdown of the most recent
+pipeline execution.
+
+
+```python
+import pandas as pd
+
+results = pd.DataFrame([
+    {"Step": "load_documents",   "Status": "success", "Duration (s)": 1.20, "Output Summary": "Loaded 42 documents (3.1 MB)"},
+    {"Step": "chunk_text",       "Status": "success", "Duration (s)": 0.85, "Output Summary": "Created 187 chunks (avg 512 tokens)"},
+    {"Step": "embed_chunks",     "Status": "success", "Duration (s)": 4.30, "Output Summary": "Generated 187 embeddings (dim=1536)"},
+    {"Step": "retrieve_context", "Status": "success", "Duration (s)": 0.12, "Output Summary": "Retrieved top 5 chunks (score >= 0.82)"},
+    {"Step": "generate_answer",  "Status": "success", "Duration (s)": 2.40, "Output Summary": "Generated answer (148 tokens)"},
+])
+
+results
+```
+
+<div dangerouslySetInnerHTML={{ __html: quartoRawHtml[0] }} />
+
+<div dangerouslySetInnerHTML={{ __html: quartoRawHtml[1] }} />
+
+<div dangerouslySetInnerHTML={{ __html: quartoRawHtml[2] }} />
+
+## Run Summary
+
+A quick programmatic summary gives an at-a-glance view of pipeline
+health.
+
+
+```python
+run = {
+    "run_id": "run-20250115-001",
+    "pipeline": "Document Q&A",
+    "steps": [
+        {"name": "load_documents",   "status": "success", "duration": 1.20},
+        {"name": "chunk_text",       "status": "success", "duration": 0.85},
+        {"name": "embed_chunks",     "status": "success", "duration": 4.30},
+        {"name": "retrieve_context", "status": "success", "duration": 0.12},
+        {"name": "generate_answer",  "status": "success", "duration": 2.40},
+    ],
+}
+
+passed = sum(1 for s in run["steps"] if s["status"] == "success")
+total_time = sum(s["duration"] for s in run["steps"])
+slowest = max(run["steps"], key=lambda s: s["duration"])
+fastest = min(run["steps"], key=lambda s: s["duration"])
+
+print("=" * 40)
+print("  Pipeline Run Summary")
+print("=" * 40)
+print(f"  Run ID:      {run['run_id']}")
+print(f"  Pipeline:    {run['pipeline']}")
+print(f"  Status:      {'SUCCESS' if passed == len(run['steps']) else 'FAILURE'}")
+print(f"  Steps:       {passed} / {len(run['steps'])} passed")
+print(f"  Total time:  {total_time:.2f} s")
+print(f"  Slowest:     {slowest['name']} ({slowest['duration']:.2f} s)")
+print(f"  Fastest:     {fastest['name']} ({fastest['duration']:.2f} s)")
+print("=" * 40)
+```
+
+``` text
+========================================
+  Pipeline Run Summary
+========================================
+  Run ID:      run-20250115-001
+  Pipeline:    Document Q&A
+  Status:      SUCCESS
+  Steps:       5 / 5 passed
+  Total time:  8.87 s
+  Slowest:     embed_chunks (4.30 s)
+  Fastest:     retrieve_context (0.12 s)
+========================================
+```
+
+## Interpreting Results
+
+Key things to look for when reviewing pipeline results:
+
+-   **Duration outliers** — Steps that take disproportionately long may
+    benefit from caching or batching. In this run, `embed_chunks`
+    dominates at 4.30 s (48% of total time).
+-   **Failure propagation** — If an early step fails, downstream steps
+    are skipped. Always check the first failed step.
+-   **Output sizes** — Large intermediate outputs (e.g., many chunks)
+    can indicate that chunk size or overlap parameters need tuning.

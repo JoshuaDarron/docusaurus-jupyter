@@ -39,19 +39,31 @@ export default [
   },
   {
     path: '/docs',
-    component: ComponentCreator('/docs', '393'),
+    component: ComponentCreator('/docs', 'aea'),
     routes: [
       {
         path: '/docs',
-        component: ComponentCreator('/docs', '97a'),
+        component: ComponentCreator('/docs', '23e'),
         routes: [
           {
             path: '/docs',
-            component: ComponentCreator('/docs', '7fc'),
+            component: ComponentCreator('/docs', 'fbf'),
             routes: [
               {
                 path: '/docs/intro',
                 component: ComponentCreator('/docs/intro', '61d'),
+                exact: true,
+                sidebar: "tutorialSidebar"
+              },
+              {
+                path: '/docs/notebooks/notebooks/pipeline-basics',
+                component: ComponentCreator('/docs/notebooks/notebooks/pipeline-basics', 'c86'),
+                exact: true,
+                sidebar: "tutorialSidebar"
+              },
+              {
+                path: '/docs/notebooks/notebooks/pipeline-results',
+                component: ComponentCreator('/docs/notebooks/notebooks/pipeline-results', '9eb'),
                 exact: true,
                 sidebar: "tutorialSidebar"
               }
