@@ -1,0 +1,159 @@
+{
+  "components": [
+    {
+      "id": "sample_google_1",
+      "provider": "sample_google",
+      "config": {
+        "actions": {},
+        "mode": "Source",
+        "type": "sample_google",
+        "useSelectMode": "driver",
+        "preselected": {
+          "Audio": false,
+          "Audio_Lite": false,
+          "Finance": false,
+          "Finance_Lite": false,
+          "Hackathon": true,
+          "HR": false,
+          "HR_Lite": false,
+          "Images": false,
+          "Images_Lite": false,
+          "Legal": false,
+          "Legal_Lite": false,
+          "Video": false,
+          "Video_Lite": false
+        }
+      },
+      "ui": {
+        "position": {
+          "x": 0,
+          "y": 120
+        },
+        "measured": {
+          "width": 140,
+          "height": 61
+        },
+        "data": {
+          "class": "source",
+          "type": "default"
+        },
+        "formDataValid": true
+      }
+    },
+    {
+      "id": "parse_1",
+      "provider": "parse",
+      "config": {},
+      "ui": {
+        "position": {
+          "x": 200,
+          "y": 100
+        },
+        "measured": {
+          "width": 140,
+          "height": 123
+        },
+        "data": {
+          "class": "data",
+          "type": "default"
+        },
+        "formDataValid": true,
+        "edges": [
+          {
+            "source": "sample_google_1",
+            "sourceHandle": "source-tags-0",
+            "target": "parse_1",
+            "targetHandle": "target-tags-0",
+            "id": "xy-edge__sample_google_1source-tags-0-parse_1target-tags-0"
+          }
+        ]
+      },
+      "input": [
+        {
+          "lane": "tags",
+          "from": "sample_google_1"
+        }
+      ]
+    },
+    {
+      "id": "preprocessor_langchain_1",
+      "provider": "preprocessor_langchain",
+      "config": {
+        "profile": "default",
+        "default": {
+          "mode": "strlen",
+          "splitter": "RecursiveCharacterTextSplitter",
+          "strlen": 512
+        }
+      },
+      "ui": {
+        "position": {
+          "x": 420,
+          "y": 120
+        },
+        "measured": {
+          "width": 140,
+          "height": 106
+        },
+        "data": {
+          "class": "preprocessor",
+          "type": "default"
+        },
+        "formDataValid": true,
+        "edges": [
+          {
+            "source": "parse_1",
+            "sourceHandle": "source-text-0",
+            "target": "preprocessor_langchain_1",
+            "targetHandle": "target-text-1",
+            "id": "xy-edge__parse_1source-text-0-preprocessor_langchain_1target-text-1"
+          }
+        ]
+      },
+      "input": [
+        {
+          "lane": "text",
+          "from": "parse_1"
+        }
+      ]
+    },
+    {
+      "id": "response_1",
+      "provider": "response",
+      "config": {
+        "lanes": []
+      },
+      "ui": {
+        "position": {
+          "x": 620,
+          "y": 80
+        },
+        "measured": {
+          "width": 140,
+          "height": 263
+        },
+        "data": {
+          "class": "infrastructure",
+          "type": "default"
+        },
+        "formDataValid": true,
+        "edges": [
+          {
+            "source": "preprocessor_langchain_1",
+            "sourceHandle": "source-documents-1",
+            "target": "response_1",
+            "targetHandle": "target-documents-2",
+            "id": "xy-edge__preprocessor_langchain_1source-documents-1-response_1target-documents-2"
+          }
+        ]
+      },
+      "input": [
+        {
+          "lane": "documents",
+          "from": "preprocessor_langchain_1"
+        }
+      ]
+    }
+  ],
+  "id": "7368b3bc-6c8f-4b85-a97d-a9cb73087108"
+}

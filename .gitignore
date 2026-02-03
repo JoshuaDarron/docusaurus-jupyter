@@ -1,6 +1,7 @@
 node_modules
 build
 .docusaurus
+.env
 
 /.quarto/
 **/*.quarto_ipynb
