@@ -2,6 +2,7 @@ node_modules
 build
 .docusaurus
 .env
+.claude/settings.local.json
 
 /.quarto/
 **/*.quarto_ipynb
