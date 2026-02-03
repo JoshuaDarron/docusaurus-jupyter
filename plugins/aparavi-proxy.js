@@ -6,14 +6,15 @@ module.exports = function aparaviProxyPlugin(context, options) {
       const target = context.siteConfig.customFields?.APARAVI_BASE_URL || 'https://eaas.aparavi.com';
       return {
         devServer: {
-          proxy: {
-            '/api/aparavi': {
+          proxy: [
+            {
+              context: ['/api/aparavi'],
               target: target.replace(/\/$/, ''),
               changeOrigin: true,
               pathRewrite: { '^/api/aparavi': '' },
               secure: true,
             },
-          },
+          ],
         },
       };
     },

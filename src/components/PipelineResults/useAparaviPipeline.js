@@ -4,6 +4,12 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 const POLL_INTERVAL = 5000;
 const MAX_POLL_ATTEMPTS = 200;
 
+function formatError(value) {
+  if (value == null) return null;
+  if (typeof value === 'string') return value;
+  return JSON.stringify(value, null, 2);
+}
+
 function wrapPipelinePayload(pipeline) {
   if (pipeline.pipeline) {
     return { pipeline: pipeline.pipeline, errors: pipeline.errors || [], warnings: pipeline.warnings || [] };
@@ -34,7 +40,7 @@ export default function useAparaviPipeline() {
     const res = await fetch(`/api/aparavi${path}`, opts);
     const json = await res.json();
     if (res.status === 401) throw new Error('Authentication failed. Check your API key.');
-    if (res.status >= 400) throw new Error(json.error || `API error ${res.status}`);
+    if (res.status >= 400) throw new Error(formatError(json.error) || `API error ${res.status}`);
     return json;
   }
 
@@ -57,14 +63,14 @@ export default function useAparaviPipeline() {
       const payload = wrapPipelinePayload(pipelineConfig);
       const validateRes = await apiFetch('POST', '/pipe/validate', payload);
       if (validateRes.status === 'Error') {
-        throw new Error(`Validation failed: ${validateRes.error || 'unknown error'}`);
+        throw new Error(`Validation failed: ${formatError(validateRes.error) || 'unknown error'}`);
       }
 
       // Step 2: Execute
       setStatus('executing');
       const execRes = await apiFetch('PUT', '/task?name=my-task', payload);
       if (execRes.status !== 'OK' || !execRes.data) {
-        throw new Error(`Execution failed: ${execRes.error || 'no task data returned'}`);
+        throw new Error(`Execution failed: ${formatError(execRes.error) || 'no task data returned'}`);
       }
       const { token, type: taskType } = execRes.data;
 
@@ -77,7 +83,7 @@ export default function useAparaviPipeline() {
         const taskStatus = pollResult.data?.status;
         if (taskStatus === 'Completed' || taskStatus === 'Done') break;
         if (taskStatus === 'Error' || taskStatus === 'Failed') {
-          throw new Error(`Pipeline failed: ${pollResult.error || pollResult.data?.error || 'unknown error'}`);
+          throw new Error(`Pipeline failed: ${formatError(pollResult.error) || formatError(pollResult.data?.error) || 'unknown error'}`);
         }
         await new Promise(r => setTimeout(r, POLL_INTERVAL));
       }

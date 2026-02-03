@@ -254,10 +254,14 @@
 
 .errorMessage {
   width: 100%;
+  margin: 0;
   padding: 8px 12px;
   font-size: 0.85rem;
+  font-family: var(--ifm-font-family-monospace);
   color: var(--ifm-color-danger-darkest);
   background: var(--ifm-color-danger-contrast-background);
   border: 1px solid var(--ifm-color-danger);
   border-radius: var(--ifm-code-border-radius);
+  white-space: pre-wrap;
+  word-break: break-word;
 }

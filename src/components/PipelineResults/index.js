@@ -146,7 +146,7 @@ export default function PipelineResults({ config, results: staticResults }) {
           </button>
         )}
         {status !== "idle" && <StatusIndicator status={status} />}
-        {error && <div className={styles.errorMessage}>{error}</div>}
+        {error && <pre className={styles.errorMessage}>{error}</pre>}
       </div>
 
       <h3>
