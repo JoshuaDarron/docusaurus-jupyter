@@ -1,5 +1,4 @@
 {
-	"source": "sample_google_1",
 	"components": [
 		{
 			"id": "sample_google_1",
@@ -156,5 +155,6 @@
 			]
 		}
 	],
-	"id": "7368b3bc-6c8f-4b85-a97d-a9cb73087108"
+	"id": "7368b3bc-6c8f-4b85-a97d-a9cb73087108",
+	"source": "sample_google_1"
 }

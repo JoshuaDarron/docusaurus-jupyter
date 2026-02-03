@@ -22,10 +22,6 @@ const config = {
     APARAVI_BASE_URL: process.env.APARAVI_BASE_URL || 'https://eaas.aparavi.com/',
   },
 
-  plugins: [
-    './plugins/aparavi-proxy',
-  ],
-
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
