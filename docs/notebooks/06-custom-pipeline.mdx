@@ -77,7 +77,7 @@ pipeline = {
         {
             "id": "response_1",
             "provider": "response",
-            "config": {"lanes": []},
+            "config": {"lanes": ["documents"]},
             "input": [{"lane": "documents", "from": "preprocessor_langchain_1"}],
         },
     ],

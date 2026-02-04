@@ -121,7 +121,7 @@
 			"id": "response_1",
 			"provider": "response",
 			"config": {
-				"lanes": []
+				"lanes": ["documents"]
 			},
 			"ui": {
 				"position": {
