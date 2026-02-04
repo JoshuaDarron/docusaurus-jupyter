@@ -19,6 +19,76 @@ to update the flow diagram and configuration table. Once loaded, click
 
 <PipelineEditor defaultConfig={pipelineConfig} />
 
+## Python SDK Execution
+
+You can also run pipelines using the `aparavi` Python package. Edit the code
+below to customize the execution — this runs in the browser via Pyodide.
+
+<LiveCodeEditor defaultCode={`import json
+
+# Aparavi pipeline execution using the Python SDK.
+# NOTE: The aparavi package requires a server-side Python
+# environment. This snippet shows the pattern you would
+# use in a local script or notebook.
+
+# pip install aparavi python-dotenv
+from aparavi import AparaviClient
+
+# Configure your credentials
+api_key = "your-api-key-here"
+base_url = "https://eaas.aparavi.com/"
+
+client = AparaviClient(api_key=api_key, base_url=base_url)
+
+# Define your pipeline configuration inline or load from a file
+pipeline = {
+    "id": "7368b3bc-6c8f-4b85-a97d-a9cb73087108",
+    "source": "sample_google_1",
+    "components": [
+        {
+            "id": "sample_google_1",
+            "provider": "sample_google",
+            "config": {
+                "mode": "Source",
+                "type": "sample_google",
+                "useSelectMode": "driver",
+                "preselected": {"Hackathon": True},
+            },
+        },
+        {
+            "id": "parse_1",
+            "provider": "parse",
+            "config": {},
+            "input": [{"lane": "tags", "from": "sample_google_1"}],
+        },
+        {
+            "id": "preprocessor_langchain_1",
+            "provider": "preprocessor_langchain",
+            "config": {
+                "profile": "default",
+                "default": {
+                    "mode": "strlen",
+                    "splitter": "RecursiveCharacterTextSplitter",
+                    "strlen": 512,
+                },
+            },
+            "input": [{"lane": "text", "from": "parse_1"}],
+        },
+        {
+            "id": "response_1",
+            "provider": "response",
+            "config": {"lanes": []},
+            "input": [{"lane": "documents", "from": "preprocessor_langchain_1"}],
+        },
+    ],
+}
+
+# Execute the pipeline
+print("Executing pipeline", pipeline["id"], "...")
+result = client.execute_pipeline_workflow(pipeline)
+print("Done! Documents returned:", len(result.get("documents", [])))
+print(json.dumps(result, indent=2, default=str)[:2000])`} />
+
 ## Tips
 
 - Export a pipeline JSON from the [Aparavi platform](https://core.aparavi.com/)

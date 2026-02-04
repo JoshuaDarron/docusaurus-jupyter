@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import usePyodide from "../LiveCode/usePyodide";
 import styles from "./styles.module.css";
 
-const DEFAULT_CODE = `# Write your Python code here
+const FALLBACK_CODE = `# Write your Python code here
 print("Hello, world!")`;
 
-export default function LiveCodeEditor() {
-  const [code, setCode] = useState(DEFAULT_CODE);
+export default function LiveCodeEditor({ defaultCode }) {
+  const initialCode = typeof defaultCode === "string" ? defaultCode : FALLBACK_CODE;
+  const [code, setCode] = useState(initialCode);
   const { runPython, loading, running } = usePyodide();
   const [result, setResult] = useState(null);
 
@@ -33,7 +34,7 @@ export default function LiveCodeEditor() {
         value={code}
         onChange={(e) => setCode(e.target.value)}
         spellCheck={false}
-        rows={10}
+        rows={Math.max(10, initialCode.split("\n").length + 2)}
       />
       <div className={styles.toolbar}>
         <button
