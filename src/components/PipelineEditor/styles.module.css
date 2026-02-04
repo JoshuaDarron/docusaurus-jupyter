@@ -1,0 +1,117 @@
+.container {
+  margin-bottom: var(--ifm-leading);
+}
+
+.editorSection {
+  margin-bottom: var(--ifm-leading);
+}
+
+.editorHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.editorTitle {
+  margin: 0;
+}
+
+.dirtyBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  color: var(--ifm-color-white);
+  background: var(--ifm-color-warning-dark);
+}
+
+.editor {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: var(--ifm-pre-padding);
+  background: var(--ifm-code-background);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--ifm-code-font-size);
+  line-height: var(--ifm-pre-line-height);
+  color: var(--ifm-font-color-base);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-code-border-radius);
+  outline: none;
+  resize: vertical;
+  tab-size: 2;
+  white-space: pre;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+
+.editor:focus {
+  box-shadow: inset 0 0 0 2px var(--ifm-color-primary);
+}
+
+.editorError {
+  border-color: var(--ifm-color-danger);
+}
+
+.editorError:focus {
+  box-shadow: inset 0 0 0 2px var(--ifm-color-danger);
+}
+
+.error {
+  margin-top: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-family: var(--ifm-font-family-monospace);
+  color: var(--ifm-color-danger-darkest);
+  background: var(--ifm-color-danger-contrast-background);
+  border: 1px solid var(--ifm-color-danger);
+  border-radius: var(--ifm-code-border-radius);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.loadButton {
+  border: none;
+  border-radius: var(--ifm-button-border-radius);
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  cursor: pointer;
+  color: var(--ifm-color-white);
+  background: var(--ifm-color-primary);
+  transition: background 0.2s;
+}
+
+.loadButton:hover:not(:disabled) {
+  background: var(--ifm-color-primary-dark);
+}
+
+.loadButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.resetButton {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-button-border-radius);
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  cursor: pointer;
+  color: var(--ifm-font-color-base);
+  background: transparent;
+  transition: background 0.2s;
+}
+
+.resetButton:hover {
+  background: var(--ifm-color-emphasis-200);
+}

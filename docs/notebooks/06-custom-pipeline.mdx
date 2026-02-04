@@ -1,0 +1,29 @@
+---
+title: Custom Pipeline Execution
+---
+
+import PipelineEditor from "@site/src/components/PipelineEditor";
+import pipelineConfig from "@site/pipelines/pipeline-config.json";
+
+# Custom Pipeline Execution
+
+Paste or edit your own Aparavi DTC pipeline configuration below and execute it
+directly from the browser. The default pipeline is pre-loaded as a starting
+point — modify it or replace it entirely with your own.
+
+## Pipeline Editor
+
+Edit the JSON below to define your pipeline stages, then click **Load Pipeline**
+to update the flow diagram and configuration table. Once loaded, click
+**Execute Pipeline** to run it against the Aparavi API.
+
+<PipelineEditor defaultConfig={pipelineConfig} />
+
+## Tips
+
+- Export a pipeline JSON from the [Aparavi platform](https://core.aparavi.com/)
+  and paste it directly into the editor above.
+- The JSON must contain a `components` array where each entry defines a pipeline
+  stage with `id`, `provider`, `config`, `ui`, and `input` fields.
+- Make sure your `.env` file has valid `APARAVI_API_KEY` and `APARAVI_BASE_URL`
+  values before executing.
