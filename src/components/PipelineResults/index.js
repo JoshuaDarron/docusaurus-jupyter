@@ -44,6 +44,26 @@ function PipelineFlow({ components }) {
   );
 }
 
+const CONFIG_CELL_LIMIT = 250;
+
+function TruncatedCell({ text }) {
+  const [showFull, setShowFull] = useState(false);
+  if (text.length <= CONFIG_CELL_LIMIT) {
+    return <code>{text}</code>;
+  }
+  return (
+    <>
+      <code>{showFull ? text : text.slice(0, CONFIG_CELL_LIMIT) + "…"}</code>
+      <button
+        className={styles.showMoreButton}
+        onClick={() => setShowFull(!showFull)}
+      >
+        {showFull ? "Show less" : "Show more"}
+      </button>
+    </>
+  );
+}
+
 function ConfigTable({ components }) {
   return (
     <table className={styles.table}>
@@ -70,7 +90,7 @@ function ConfigTable({ components }) {
               <td>{comp.provider}</td>
               <td>{comp.ui?.data?.class || "—"}</td>
               <td>
-                <code>{configStr}</code>
+                <TruncatedCell text={configStr} />
               </td>
             </tr>
           );
