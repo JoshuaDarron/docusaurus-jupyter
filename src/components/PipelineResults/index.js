@@ -80,11 +80,19 @@ function ConfigTable({ components }) {
   );
 }
 
+const CONTENT_LIMIT = 2000;
+
 function ResultCard({ doc, index }) {
   const [expanded, setExpanded] = useState(false);
+  const [showFull, setShowFull] = useState(false);
   const title =
     doc.metadata?.source || doc.metadata?.title || `Document ${index + 1}`;
-  const charCount = doc.page_content?.length || 0;
+  const fullContent = doc.page_content || JSON.stringify(doc, null, 2);
+  const charCount = fullContent.length;
+  const isTruncated = charCount > CONTENT_LIMIT && !showFull;
+  const displayContent = isTruncated
+    ? fullContent.slice(0, CONTENT_LIMIT)
+    : fullContent;
 
   return (
     <div className={styles.resultCard}>
@@ -92,11 +100,22 @@ function ResultCard({ doc, index }) {
         <span className={styles.resultTitle}>
           {expanded ? "▾" : "▸"} {title}
         </span>
-        <span className={styles.resultMeta}>{charCount} chars</span>
+        <span className={styles.resultMeta}>{charCount.toLocaleString()} chars</span>
       </div>
       {expanded && (
         <div className={styles.resultBody}>
-          {doc.page_content || JSON.stringify(doc, null, 2)}
+          {displayContent}
+          {isTruncated && (
+            <span className={styles.truncatedNote}>...</span>
+          )}
+          {charCount > CONTENT_LIMIT && (
+            <button
+              className={styles.showMoreButton}
+              onClick={() => setShowFull(!showFull)}
+            >
+              {showFull ? "Show less" : `Show all (${charCount.toLocaleString()} chars)`}
+            </button>
+          )}
         </div>
       )}
     </div>

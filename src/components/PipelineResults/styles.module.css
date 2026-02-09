@@ -137,6 +137,29 @@
   overflow-y: auto;
 }
 
+.truncatedNote {
+  color: var(--ifm-color-emphasis-500);
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+.showMoreButton {
+  display: block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  color: var(--ifm-color-primary);
+  background: none;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-code-border-radius);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.showMoreButton:hover {
+  background: var(--ifm-color-primary);
+  color: var(--ifm-color-white);
+}
+
 .badge {
   display: inline-block;
   padding: 2px 8px;
