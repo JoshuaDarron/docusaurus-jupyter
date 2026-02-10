@@ -152,10 +152,10 @@ function StatusIndicator({ status }) {
   );
 }
 
-export default function PipelineResults({ config, results: staticResults }) {
+export default function PipelineResults({ config, results: staticResults, apiKey, baseUrl }) {
   const pipeline = config || {};
   const components = pipeline.components || [];
-  const { status, results: liveResults, error, running, executePipeline, cancel } = useAparaviPipeline();
+  const { status, results: liveResults, error, running, executePipeline, cancel } = useAparaviPipeline({ apiKey, baseUrl });
 
   const results = liveResults || staticResults;
   const documents = results?.documents || results?.results || [];

@@ -1,0 +1,22 @@
+---
+title: Pipeline Playground
+---
+
+import PipelinePlayground from "@site/src/components/PipelinePlayground";
+import pipelineConfig from "@site/pipelines/pipeline-config.json";
+
+# Pipeline Playground
+
+Run Aparavi DTC pipelines directly in the browser using your own API key. Enter
+your credentials below, edit the pipeline configuration, and click
+**Execute Pipeline** to see results.
+
+<PipelinePlayground defaultConfig={pipelineConfig} />
+
+## Tips
+
+- Get your API key from the [Aparavi platform](https://core.aparavi.com/).
+- The default base URL (`https://eaas.aparavi.com/`) works for most accounts.
+  Change it only if your organization uses a different endpoint.
+- Export a pipeline JSON from the Aparavi platform and paste it into the editor
+  to run your own pipelines.

@@ -17,10 +17,10 @@ function wrapPipelinePayload(pipeline) {
 	return { pipeline, errors: [], warnings: [] };
 }
 
-export default function useAparaviPipeline() {
+export default function useAparaviPipeline(overrides = {}) {
 	const { siteConfig } = useDocusaurusContext();
-	const apiKey = siteConfig.customFields?.APARAVI_API_KEY || '';
-	const baseUrl = (siteConfig.customFields?.APARAVI_BASE_URL || 'https://eaas.aparavi.com/').replace(/\/$/, '');
+	const apiKey = overrides.apiKey || siteConfig.customFields?.APARAVI_API_KEY || '';
+	const baseUrl = (overrides.baseUrl || siteConfig.customFields?.APARAVI_BASE_URL || 'https://eaas.aparavi.com/').replace(/\/$/, '');
 
 	const [status, setStatus] = useState('idle');
 	const [results, setResults] = useState(null);
@@ -54,7 +54,7 @@ export default function useAparaviPipeline() {
 
 	const executePipeline = useCallback(async (pipelineConfig) => {
 		if (!apiKey) {
-			setError('APARAVI_API_KEY is not configured. Add it to your .env file and restart the dev server.');
+			setError('No API key provided. Enter your API key or add APARAVI_API_KEY to your .env file.');
 			setStatus('error');
 			return;
 		}

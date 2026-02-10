@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import PipelineResults from "../PipelineResults";
 import styles from "./styles.module.css";
 
-export default function PipelineEditor({ defaultConfig }) {
+export default function PipelineEditor({ defaultConfig, apiKey, baseUrl }) {
   const defaultJson = JSON.stringify(defaultConfig, null, 2);
   const [jsonText, setJsonText] = useState(defaultJson);
   const [parsedConfig, setParsedConfig] = useState(defaultConfig);
@@ -68,7 +68,7 @@ export default function PipelineEditor({ defaultConfig }) {
         </div>
       </div>
 
-      <PipelineResults config={parsedConfig} />
+      <PipelineResults config={parsedConfig} apiKey={apiKey} baseUrl={baseUrl} />
     </div>
   );
 }
