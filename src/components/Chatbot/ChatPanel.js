@@ -7,8 +7,8 @@ export default function ChatPanel({ onClose }) {
   const {
     messages,
     streaming,
+    connecting,
     error,
-    embeddingsLoading,
     sendMessage,
     cancel,
     clearChat,
@@ -58,14 +58,14 @@ export default function ChatPanel({ onClose }) {
       </div>
 
       <div className={styles.messages}>
-        {messages.length === 0 && !embeddingsLoading && (
+        {messages.length === 0 && !connecting && (
           <div className={styles.placeholder}>
             Ask a question about the documentation.
           </div>
         )}
 
-        {embeddingsLoading && (
-          <div className={styles.loading}>Loading search index...</div>
+        {connecting && (
+          <div className={styles.loading}>Connecting to pipeline...</div>
         )}
 
         {messages.map((msg, i) => (
@@ -90,7 +90,7 @@ export default function ChatPanel({ onClose }) {
 
       {!apiKeyConfigured && (
         <div className={styles.warning}>
-          API key not configured. Add <code>ANTHROPIC_API_KEY</code> to your{' '}
+          API key not configured. Add <code>APARAVI_API_KEY</code> to your{' '}
           <code>.env</code> file.
         </div>
       )}
@@ -106,7 +106,7 @@ export default function ChatPanel({ onClose }) {
               ? 'Ask about the docs...'
               : 'API key required'
           }
-          disabled={!apiKeyConfigured || embeddingsLoading}
+          disabled={!apiKeyConfigured || connecting}
         />
         {streaming ? (
           <button
@@ -120,7 +120,7 @@ export default function ChatPanel({ onClose }) {
           <button
             type="submit"
             className={styles.sendButton}
-            disabled={!apiKeyConfigured || !input.trim() || embeddingsLoading}
+            disabled={!apiKeyConfigured || !input.trim() || connecting}
           >
             Send
           </button>
