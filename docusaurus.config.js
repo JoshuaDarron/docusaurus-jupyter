@@ -20,12 +20,15 @@ const config = {
   customFields: {
     APARAVI_API_KEY: process.env.APARAVI_API_KEY || '',
     APARAVI_BASE_URL: process.env.APARAVI_BASE_URL || 'https://eaas.aparavi.com/',
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
   },
 
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
   },
+
+  plugins: ['./plugins/doc-embeddings'],
 
   presets: [
     [
