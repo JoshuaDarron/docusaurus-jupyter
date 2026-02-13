@@ -1,32 +1,65 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import useEmbeddings from './useEmbeddings';
-
-const MAX_HISTORY = 10;
-
-function buildSystemPrompt(chunks) {
-  const context = chunks
-    .map((c) => `### ${c.title}\nSource: ${c.url}\n\n${c.text}`)
-    .join('\n\n---\n\n');
-
-  return `You are a helpful documentation assistant for the AI Pipeline Docs site. Answer user questions based on the documentation context provided below. Be concise and accurate. If the context doesn't contain enough information to answer, say so. When relevant, reference which doc page the information comes from.
-
-## Documentation Context
-
-${context}`;
-}
+import { AparaviClient, Question } from 'aparavi-client';
+import ragPipeline from '../../../pipelines/rag-pipeline.json';
 
 export default function useChatbot() {
   const { siteConfig } = useDocusaurusContext();
-  const apiKey = siteConfig.customFields?.ANTHROPIC_API_KEY || '';
+  const apiKey = siteConfig.customFields?.APARAVI_API_KEY || '';
+  const uri = siteConfig.customFields?.APARAVI_URI || 'wss://dtc.aparavi.com:443';
   const apiKeyConfigured = Boolean(apiKey);
-
-  const { loading: embeddingsLoading, ready: embeddingsReady, initialize, search } = useEmbeddings();
 
   const [messages, setMessages] = useState([]);
   const [streaming, setStreaming] = useState(false);
+  const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState(null);
-  const abortRef = useRef(null);
+
+  const clientRef = useRef(null);
+  const tokenRef = useRef(null);
+
+  // Lazy-init: connect + start pipeline on first use
+  async function ensureClient() {
+    if (clientRef.current && tokenRef.current) return;
+
+    setConnecting(true);
+    try {
+      const client = new AparaviClient({ auth: apiKey, uri });
+      await client.connect();
+
+      const { token } = await client.use({
+        pipeline: { components: ragPipeline.components },
+      });
+
+      clientRef.current = client;
+      tokenRef.current = token;
+    } catch (err) {
+      // Clean up on failure
+      if (clientRef.current) {
+        try { await clientRef.current.disconnect(); } catch {}
+      }
+      clientRef.current = null;
+      tokenRef.current = null;
+      throw err;
+    } finally {
+      setConnecting(false);
+    }
+  }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      const client = clientRef.current;
+      const token = tokenRef.current;
+      if (client) {
+        (async () => {
+          try { if (token) await client.terminate(token); } catch {}
+          try { await client.disconnect(); } catch {}
+        })();
+      }
+      clientRef.current = null;
+      tokenRef.current = null;
+    };
+  }, []);
 
   const sendMessage = useCallback(
     async (text) => {
@@ -37,117 +70,58 @@ export default function useChatbot() {
       setError(null);
       setStreaming(true);
 
-      const controller = new AbortController();
-      abortRef.current = controller;
-
       try {
-        // Initialize embeddings on first message
-        if (!embeddingsReady) {
-          await initialize();
+        await ensureClient();
+
+        const question = new Question();
+        question.addQuestion(text.trim());
+
+        // Include recent chat history for context
+        const history = messages.slice(-10);
+        for (const msg of history) {
+          question.addHistory({ role: msg.role, content: msg.content });
         }
-
-        // Search for relevant context
-        const chunks = await search(text);
-
-        // Build messages for Claude API with sliding window
-        const systemPrompt = buildSystemPrompt(chunks);
-        const history = [...messages, userMessage].slice(-MAX_HISTORY);
-        const apiMessages = history.map((m) => ({
-          role: m.role,
-          content: m.content,
-        }));
 
         // Add placeholder for assistant response
         setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
 
-        // Call Claude API with streaming
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true',
-          },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-5-20250929',
-            max_tokens: 1024,
-            system: systemPrompt,
-            messages: apiMessages,
-            stream: true,
-          }),
-          signal: controller.signal,
+        const result = await clientRef.current.chat({
+          token: tokenRef.current,
+          question,
         });
 
-        if (!response.ok) {
-          const errText = await response.text();
-          throw new Error(`API error ${response.status}: ${errText}`);
-        }
+        // Extract answer from pipeline result
+        const answerText = extractAnswer(result);
 
-        // Process SSE stream
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-        let assistantContent = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop();
-
-          for (const line of lines) {
-            if (!line.startsWith('data: ')) continue;
-            const data = line.slice(6);
-            if (data === '[DONE]') continue;
-
-            try {
-              const event = JSON.parse(data);
-              if (
-                event.type === 'content_block_delta' &&
-                event.delta?.type === 'text_delta'
-              ) {
-                assistantContent += event.delta.text;
-                setMessages((prev) => {
-                  const updated = [...prev];
-                  updated[updated.length - 1] = {
-                    role: 'assistant',
-                    content: assistantContent,
-                  };
-                  return updated;
-                });
-              }
-            } catch {
-              // Skip malformed JSON lines
-            }
-          }
-        }
+        setMessages((prev) => {
+          const updated = [...prev];
+          updated[updated.length - 1] = {
+            role: 'assistant',
+            content: answerText,
+          };
+          return updated;
+        });
       } catch (err) {
-        if (err.name === 'AbortError') {
-          // User cancelled — keep partial response
-        } else {
-          setError(err.message);
-          // Remove the empty assistant placeholder on error
-          setMessages((prev) => {
-            const last = prev[prev.length - 1];
-            if (last?.role === 'assistant' && !last.content) {
-              return prev.slice(0, -1);
-            }
-            return prev;
-          });
-        }
+        setError(err.message);
+        // Remove empty assistant placeholder on error
+        setMessages((prev) => {
+          const last = prev[prev.length - 1];
+          if (last?.role === 'assistant' && !last.content) {
+            return prev.slice(0, -1);
+          }
+          return prev;
+        });
       } finally {
         setStreaming(false);
-        abortRef.current = null;
       }
     },
-    [apiKey, apiKeyConfigured, messages, embeddingsReady, initialize, search],
+    [apiKey, apiKeyConfigured, messages],
   );
 
   const cancel = useCallback(() => {
-    if (abortRef.current) abortRef.current.abort();
+    // WebSocket-based chat doesn't support mid-request cancellation
+    // but we can still reset the streaming state
+    setStreaming(false);
   }, []);
 
   const clearChat = useCallback(() => {
@@ -158,11 +132,35 @@ export default function useChatbot() {
   return {
     messages,
     streaming,
+    connecting,
     error,
-    embeddingsLoading,
     sendMessage,
     cancel,
     clearChat,
     apiKeyConfigured,
   };
+}
+
+function extractAnswer(result) {
+  if (!result) return 'No response received.';
+
+  // Look for answer fields via result_types
+  if (result.result_types) {
+    for (const [field, type] of Object.entries(result.result_types)) {
+      if (type === 'answers' && result[field]) {
+        const val = result[field];
+        return Array.isArray(val) ? val.join('\n') : String(val);
+      }
+    }
+  }
+
+  // Fallback: check common field names
+  for (const key of ['answers', 'text', 'output', 'content', 'result']) {
+    if (result[key]) {
+      const val = result[key];
+      return Array.isArray(val) ? val.join('\n') : String(val);
+    }
+  }
+
+  return 'No response received.';
 }

@@ -5,9 +5,10 @@ module.exports = function docEmbeddingsPlugin() {
       if (isServer) {
         return {
           externals: [
-            // Externalize @huggingface/transformers during SSR —
-            // it's only used client-side via dynamic import().
-            '@huggingface/transformers',
+            // Externalize aparavi-client (and ws transitive dep) during SSR —
+            // it's only used client-side via WebSocket.
+            'aparavi-client',
+            'ws',
           ],
         };
       }

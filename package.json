@@ -5,8 +5,8 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
-    "generate-embeddings": "node scripts/generate-embeddings.mjs",
-    "prebuild": "node scripts/generate-embeddings.mjs",
+    "vectorize-docs": "node scripts/vectorize-docs.mjs",
+    "prebuild": "node scripts/vectorize-docs.mjs",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
@@ -18,8 +18,8 @@
   "dependencies": {
     "@docusaurus/core": "3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
-    "@huggingface/transformers": "^3.8.1",
     "@mdx-js/react": "^3.0.0",
+    "aparavi-client": "^1.0.10",
     "clsx": "^2.0.0",
     "dotenv": "^17.2.3",
     "prism-react-renderer": "^2.3.0",

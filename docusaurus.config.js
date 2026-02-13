@@ -20,7 +20,7 @@ const config = {
   customFields: {
     APARAVI_API_KEY: process.env.APARAVI_API_KEY || '',
     APARAVI_BASE_URL: process.env.APARAVI_BASE_URL || 'https://eaas.aparavi.com/',
-    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
+    APARAVI_URI: process.env.APARAVI_URI || 'wss://dtc.aparavi.com:443',
   },
 
   i18n: {
