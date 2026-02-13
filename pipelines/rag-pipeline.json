@@ -1,291 +1,292 @@
 {
-  "components": [
-    {
-      "id": "parse_1",
-      "provider": "parse",
-      "config": {},
-      "ui": {
-        "position": {
-          "x": 200,
-          "y": 440
-        },
-        "measured": {
-          "width": 140,
-          "height": 127
-        },
-        "data": {
-          "provider": "parse",
-          "class": "default",
-          "type": "default"
-        },
-        "formDataValid": true
-      },
-      "input": [
-        {
-          "lane": "tags",
-          "from": "webhook_1"
-        }
-      ]
-    },
-    {
-      "id": "preprocessor_langchain_1",
-      "provider": "preprocessor_langchain",
-      "config": {
-        "profile": "default",
-        "default": {
-          "mode": "strlen",
-          "splitter": "RecursiveCharacterTextSplitter"
-        }
-      },
-      "ui": {
-        "position": {
-          "x": 420,
-          "y": 480
-        },
-        "measured": {
-          "width": 140,
-          "height": 81
-        },
-        "data": {
-          "provider": "preprocessor_langchain",
-          "class": "default",
-          "type": "default"
-        },
-        "formDataValid": false
-      },
-      "input": [
-        {
-          "lane": "text",
-          "from": "parse_1"
-        }
-      ]
-    },
-    {
-      "id": "embedding_transformer_1",
-      "provider": "embedding_transformer",
-      "config": {
-        "profile": "bge-base"
-      },
-      "ui": {
-        "position": {
-          "x": 634.0364516514362,
-          "y": 492.4604658884533
-        },
-        "measured": {
-          "width": 140,
-          "height": 81
-        },
-        "data": {
-          "provider": "embedding_transformer",
-          "class": "default",
-          "type": "default"
-        },
-        "formDataValid": true
-      },
-      "input": [
-        {
-          "lane": "documents",
-          "from": "preprocessor_langchain_1"
-        }
-      ]
-    },
-    {
-      "id": "embedding_transformer_2",
-      "provider": "embedding_transformer",
-      "config": {
-        "profile": "bge-base"
-      },
-      "ui": {
-        "position": {
-          "x": 620,
-          "y": 620
-        },
-        "measured": {
-          "width": 140,
-          "height": 81
-        },
-        "data": {
-          "provider": "embedding_transformer",
-          "class": "default",
-          "type": "default"
-        },
-        "formDataValid": true
-      },
-      "input": [
-        {
-          "lane": "questions",
-          "from": "chat_1"
-        }
-      ]
-    },
-    {
-      "id": "qdrant_1",
-      "provider": "qdrant",
-      "config": {
-        "profile": "cloud",
-        "cloud": {
-          "collection": "docusaurus_jupyter_poc_documents",
-          "port": 6333,
-          "score": 0.7,
-          "host": ""
-        },
-        "local": {
-          "collection": "APARAVI",
-          "host": "localhost",
-          "port": 6333,
-          "score": 0.7
-        },
-        "parameters": {
-          "google": {}
-        }
-      },
-      "ui": {
-        "position": {
-          "x": 885.6694880652954,
-          "y": 509.8024269607107
-        },
-        "measured": {
-          "width": 140,
-          "height": 96
-        },
-        "data": {
-          "provider": "qdrant",
-          "class": "default",
-          "type": "default"
-        },
-        "formDataValid": false
-      },
-      "input": [
-        {
-          "lane": "documents",
-          "from": "embedding_transformer_1"
-        },
-        {
-          "lane": "questions",
-          "from": "embedding_transformer_2"
-        }
-      ]
-    },
-    {
-      "id": "response_1",
-      "provider": "response",
-      "config": {
-        "lanes": []
-      },
-      "ui": {
-        "position": {
-          "x": 1340,
-          "y": 540
-        },
-        "measured": {
-          "width": 140,
-          "height": 173
-        },
-        "data": {
-          "provider": "response",
-          "class": "default",
-          "type": "default"
-        },
-        "formDataValid": true
-      },
-      "input": [
-        {
-          "lane": "answers",
-          "from": "llm_anthropic_1"
-        }
-      ]
-    },
-    {
-      "id": "chat_1",
-      "provider": "chat",
-      "config": {
-        "hideForm": true,
-        "mode": "Source",
-        "parameters": {
-          "endpoint": "/",
-          "host": "0.0.0.0",
-          "port": 5566
-        },
-        "type": "chat"
-      },
-      "ui": {
-        "position": {
-          "x": 380,
-          "y": 640
-        },
-        "measured": {
-          "width": 140,
-          "height": 66
-        },
-        "data": {
-          "provider": "chat",
-          "class": "default",
-          "type": "default"
-        },
-        "formDataValid": true
-      }
-    },
-    {
-      "id": "llm_anthropic_1",
-      "provider": "llm_anthropic",
-      "config": {
-        "profile": "claude-opus-4-1",
-        "claude-3_5-haiku": {},
-        "parameters": {
-          "google": {}
-        },
-        "claude-opus-4-1": {}
-      },
-      "ui": {
-        "position": {
-          "x": 1120,
-          "y": 520
-        },
-        "measured": {
-          "width": 140,
-          "height": 66
-        },
-        "data": {
-          "provider": "llm_anthropic",
-          "class": "llm",
-          "type": "default"
-        },
-        "formDataValid": false
-      },
-      "input": [
-        {
-          "lane": "questions",
-          "from": "qdrant_1"
-        }
-      ]
-    },
-    {
-      "id": "webhook_1",
-      "provider": "webhook",
-      "config": {
-        "hideForm": true,
-        "mode": "Source",
-        "parameters": {},
-        "type": "webhook"
-      },
-      "ui": {
-        "position": {
-          "x": -40,
-          "y": 440
-        },
-        "measured": {
-          "width": 140,
-          "height": 127
-        },
-        "data": {
-          "provider": "webhook",
-          "class": "source",
-          "type": "default"
-        },
-        "formDataValid": true
-      }
-    }
-  ],
-  "servicesVersion": 1,
-  "id": "f3a0f1cc-d7a9-4364-bf7d-847fabc7c2b6"
+	"source": "webhook_1",
+	"components": [
+		{
+			"id": "parse_1",
+			"provider": "parse",
+			"config": {},
+			"ui": {
+				"position": {
+					"x": 200,
+					"y": 440
+				},
+				"measured": {
+					"width": 140,
+					"height": 127
+				},
+				"data": {
+					"provider": "parse",
+					"class": "default",
+					"type": "default"
+				},
+				"formDataValid": true
+			},
+			"input": [
+				{
+					"lane": "tags",
+					"from": "webhook_1"
+				}
+			]
+		},
+		{
+			"id": "preprocessor_langchain_1",
+			"provider": "preprocessor_langchain",
+			"config": {
+				"profile": "default",
+				"default": {
+					"mode": "strlen",
+					"splitter": "RecursiveCharacterTextSplitter"
+				}
+			},
+			"ui": {
+				"position": {
+					"x": 420,
+					"y": 480
+				},
+				"measured": {
+					"width": 140,
+					"height": 81
+				},
+				"data": {
+					"provider": "preprocessor_langchain",
+					"class": "default",
+					"type": "default"
+				},
+				"formDataValid": false
+			},
+			"input": [
+				{
+					"lane": "text",
+					"from": "parse_1"
+				}
+			]
+		},
+		{
+			"id": "embedding_transformer_1",
+			"provider": "embedding_transformer",
+			"config": {
+				"profile": "bge-base"
+			},
+			"ui": {
+				"position": {
+					"x": 634.0364516514362,
+					"y": 492.4604658884533
+				},
+				"measured": {
+					"width": 140,
+					"height": 81
+				},
+				"data": {
+					"provider": "embedding_transformer",
+					"class": "default",
+					"type": "default"
+				},
+				"formDataValid": true
+			},
+			"input": [
+				{
+					"lane": "documents",
+					"from": "preprocessor_langchain_1"
+				}
+			]
+		},
+		{
+			"id": "embedding_transformer_2",
+			"provider": "embedding_transformer",
+			"config": {
+				"profile": "bge-base"
+			},
+			"ui": {
+				"position": {
+					"x": 620,
+					"y": 620
+				},
+				"measured": {
+					"width": 140,
+					"height": 81
+				},
+				"data": {
+					"provider": "embedding_transformer",
+					"class": "default",
+					"type": "default"
+				},
+				"formDataValid": true
+			},
+			"input": [
+				{
+					"lane": "questions",
+					"from": "chat_1"
+				}
+			]
+		},
+		{
+			"id": "qdrant_1",
+			"provider": "qdrant",
+			"config": {
+				"profile": "cloud",
+				"cloud": {
+					"collection": "docusaurus_jupyter_poc_documents",
+					"port": 6333,
+					"score": 0.7,
+					"host": ""
+				},
+				"local": {
+					"collection": "APARAVI",
+					"host": "localhost",
+					"port": 6333,
+					"score": 0.7
+				},
+				"parameters": {
+					"google": {}
+				}
+			},
+			"ui": {
+				"position": {
+					"x": 885.6694880652954,
+					"y": 509.8024269607107
+				},
+				"measured": {
+					"width": 140,
+					"height": 96
+				},
+				"data": {
+					"provider": "qdrant",
+					"class": "default",
+					"type": "default"
+				},
+				"formDataValid": false
+			},
+			"input": [
+				{
+					"lane": "documents",
+					"from": "embedding_transformer_1"
+				},
+				{
+					"lane": "questions",
+					"from": "embedding_transformer_2"
+				}
+			]
+		},
+		{
+			"id": "response_1",
+			"provider": "response",
+			"config": {
+				"lanes": []
+			},
+			"ui": {
+				"position": {
+					"x": 1340,
+					"y": 540
+				},
+				"measured": {
+					"width": 140,
+					"height": 173
+				},
+				"data": {
+					"provider": "response",
+					"class": "default",
+					"type": "default"
+				},
+				"formDataValid": true
+			},
+			"input": [
+				{
+					"lane": "answers",
+					"from": "llm_anthropic_1"
+				}
+			]
+		},
+		{
+			"id": "chat_1",
+			"provider": "chat",
+			"config": {
+				"hideForm": true,
+				"mode": "Source",
+				"parameters": {
+					"endpoint": "/",
+					"host": "0.0.0.0",
+					"port": 5566
+				},
+				"type": "chat"
+			},
+			"ui": {
+				"position": {
+					"x": 380,
+					"y": 640
+				},
+				"measured": {
+					"width": 140,
+					"height": 66
+				},
+				"data": {
+					"provider": "chat",
+					"class": "default",
+					"type": "default"
+				},
+				"formDataValid": true
+			}
+		},
+		{
+			"id": "llm_anthropic_1",
+			"provider": "llm_anthropic",
+			"config": {
+				"profile": "claude-opus-4-1",
+				"claude-3_5-haiku": {},
+				"parameters": {
+					"google": {}
+				},
+				"claude-opus-4-1": {}
+			},
+			"ui": {
+				"position": {
+					"x": 1120,
+					"y": 520
+				},
+				"measured": {
+					"width": 140,
+					"height": 66
+				},
+				"data": {
+					"provider": "llm_anthropic",
+					"class": "llm",
+					"type": "default"
+				},
+				"formDataValid": false
+			},
+			"input": [
+				{
+					"lane": "questions",
+					"from": "qdrant_1"
+				}
+			]
+		},
+		{
+			"id": "webhook_1",
+			"provider": "webhook",
+			"config": {
+				"hideForm": true,
+				"mode": "Source",
+				"parameters": {},
+				"type": "webhook"
+			},
+			"ui": {
+				"position": {
+					"x": -40,
+					"y": 440
+				},
+				"measured": {
+					"width": 140,
+					"height": 127
+				},
+				"data": {
+					"provider": "webhook",
+					"class": "source",
+					"type": "default"
+				},
+				"formDataValid": true
+			}
+		}
+	],
+	"servicesVersion": 1,
+	"id": "f3a0f1cc-d7a9-4364-bf7d-847fabc7c2b6"
 }
