@@ -55,19 +55,7 @@ async function main() {
 		llmComponent.config['claude-opus-4-1'].apikey = anthropicApiKey;
 	}
 
-	//const client = new AparaviClient({ auth: apiKey, uri: 'wss://eaas.aparavi.com:443', persist: true, reconnectDelay: 1000 });
-	const client = new AparaviClient({
-		auth: apiKey,                    // Required: API key
-		uri,      // Optional: Server URI (default: eaas.aparavi.com:443)
-		persist: true,                          // Optional: Auto-reconnect
-		reconnectDelay: 1000,                   // Optional: Reconnect delay (ms)
-		onEvent: (event) => console.log(event), // Optional: Event handler
-		onConnected: () => console.log('Connected!'),
-		onDisconnected: (reason) => console.log('Disconnected:', reason),
-		env: {                                 // Optional: Custom environment
-			APARAVI_PROJECT_ID: 'my-project'
-		}
-	});
+	const client = new AparaviClient({ auth: apiKey, uri });
 
 	try {
 		console.log(`Connecting to ${uri}...`);
