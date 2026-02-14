@@ -6,7 +6,7 @@
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "vectorize-docs": "node scripts/vectorize-docs.mjs",
-    "prebuild": "echo Skipping vectorize-docs (disabled)",
+    "prebuild": "node scripts/vectorize-docs.mjs",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
