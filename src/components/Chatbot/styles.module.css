@@ -51,11 +51,6 @@
   flex-shrink: 0;
 }
 
-.headerTitle {
-  font-weight: var(--ifm-font-weight-semibold);
-  font-size: 0.9rem;
-}
-
 .headerActions {
   display: flex;
   gap: 4px;
@@ -231,6 +226,23 @@
 .sendButton:disabled {
   opacity: 0.65;
   cursor: not-allowed;
+}
+
+.poweredBy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  opacity: 0.75;
+  font-weight: normal;
+  color: var(--ifm-color-white);
+  flex: 1;
+}
+
+.poweredByLogo {
+  height: 12px;
+  width: auto;
 }
 
 /* Mobile responsive — fullscreen panel */

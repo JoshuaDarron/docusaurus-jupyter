@@ -27,7 +27,7 @@ function collectDocFiles(dir) {
 async function main() {
 	const apiKey = process.env.APARAVI_API_KEY;
 	const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
-	const uri = process.env.APARAVI_BASE_URL || 'wss://dtc.aparavi.com';
+	const uri = process.env.APARAVI_BASE_URL || 'https://eaas.aparavi.com:443';
 
 	if (!apiKey) {
 		console.error('APARAVI_API_KEY is required. Set it in your .env file.');
@@ -62,8 +62,9 @@ async function main() {
 		await client.connect();
 
 		console.log('Starting pipeline...');
+		console.log(JSON.stringify(pipelineExport));
 		const { token } = await client.use({
-			pipeline: { components: pipelineExport.components },
+			pipeline: { pipeline: pipelineExport },
 		});
 		console.log(`Pipeline started (token: ${token})`);
 

@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = function docEmbeddingsPlugin() {
   return {
     name: 'doc-embeddings',
@@ -12,7 +14,19 @@ module.exports = function docEmbeddingsPlugin() {
           ],
         };
       }
-      return {};
+      return {
+        module: {
+          rules: [
+            {
+              // aparavi-client's ESM build uses bare directory imports without
+              // file extensions. Disable fullySpecified so webpack resolves them.
+              test: /\.js$/,
+              include: path.resolve('node_modules', 'aparavi-client', 'dist', 'esm'),
+              resolve: { fullySpecified: false },
+            },
+          ],
+        },
+      };
     },
   };
 };

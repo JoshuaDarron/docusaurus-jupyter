@@ -1,5 +1,4 @@
 {
-	"source": "webhook_1",
 	"components": [
 		{
 			"id": "parse_1",
@@ -287,6 +286,6 @@
 			}
 		}
 	],
-	"servicesVersion": 1,
-	"id": "f3a0f1cc-d7a9-4364-bf7d-847fabc7c2b6"
+	"id": "f3a0f1cc-d7a9-4364-bf7d-847fabc7c2b6",
+	"source": "webhook_1"
 }
