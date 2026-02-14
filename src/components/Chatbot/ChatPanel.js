@@ -7,7 +7,6 @@ export default function ChatPanel({ onClose }) {
   const {
     messages,
     streaming,
-    connecting,
     error,
     sendMessage,
     cancel,
@@ -32,7 +31,14 @@ export default function ChatPanel({ onClose }) {
   return (
     <div className={styles.panel}>
       <div className={styles.header}>
-        <span className={styles.headerTitle}>Docs Assistant</span>
+        <span className={styles.poweredBy}>
+          Powered by{' '}
+          <img
+            src="/img/rocketride-logo.png"
+            alt="RocketRide"
+            className={styles.poweredByLogo}
+          />
+        </span>
         <div className={styles.headerActions}>
           <button
             className={styles.headerButton}
@@ -58,14 +64,10 @@ export default function ChatPanel({ onClose }) {
       </div>
 
       <div className={styles.messages}>
-        {messages.length === 0 && !connecting && (
+        {messages.length === 0 && (
           <div className={styles.placeholder}>
             Ask a question about the documentation.
           </div>
-        )}
-
-        {connecting && (
-          <div className={styles.loading}>Connecting to pipeline...</div>
         )}
 
         {messages.map((msg, i) => (
@@ -106,7 +108,7 @@ export default function ChatPanel({ onClose }) {
               ? 'Ask about the docs...'
               : 'API key required'
           }
-          disabled={!apiKeyConfigured || connecting}
+          disabled={!apiKeyConfigured || streaming}
         />
         {streaming ? (
           <button
@@ -120,12 +122,13 @@ export default function ChatPanel({ onClose }) {
           <button
             type="submit"
             className={styles.sendButton}
-            disabled={!apiKeyConfigured || !input.trim() || connecting}
+            disabled={!apiKeyConfigured || !input.trim() || streaming}
           >
             Send
           </button>
         )}
       </form>
+
     </div>
   );
 }
