@@ -27,6 +27,8 @@ function collectDocFiles(dir) {
 async function main() {
 	const apiKey = process.env.APARAVI_API_KEY;
 	const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
+	const qdrantUrl = process.env.QDRANT_URL;
+	const qdrantApiKey = process.env.QDRANT_API_KEY;
 	const uri = process.env.APARAVI_BASE_URL || 'https://eaas.aparavi.com:443';
 
 	if (!apiKey) {
@@ -39,6 +41,16 @@ async function main() {
 		process.exit(1);
 	}
 
+	if (!qdrantUrl) {
+		console.error('QDRANT_URL is required. Set it in your .env file.');
+		process.exit(1);
+	}
+
+	if (!qdrantApiKey) {
+		console.error('QDRANT_API_KEY is required. Set it in your .env file.');
+		process.exit(1);
+	}
+
 	console.log('Collecting doc files...');
 	const docPaths = collectDocFiles(DOCS_DIR);
 	console.log(`Found ${docPaths.length} doc files`);
@@ -48,11 +60,16 @@ async function main() {
 		return;
 	}
 
-	// Load pipeline config and inject Anthropic API key into LLM component
+	// Load pipeline config and inject secrets from environment
 	const pipelineExport = JSON.parse(readFileSync(PIPELINE_FILE, 'utf-8'));
 	const llmComponent = pipelineExport.components.find((c) => c.id === 'llm_anthropic_1');
 	if (llmComponent) {
 		llmComponent.config['claude-opus-4-1'].apikey = anthropicApiKey;
+	}
+	const qdrantComponent = pipelineExport.components.find((c) => c.id === 'qdrant_1');
+	if (qdrantComponent) {
+		qdrantComponent.config.cloud.host = qdrantUrl;
+		qdrantComponent.config.cloud.apikey = qdrantApiKey;
 	}
 
 	const client = new AparaviClient({ auth: apiKey, uri });
