@@ -1,27 +1,88 @@
 import 'dotenv/config';
 import { createRequire } from 'module';
-import { readFileSync, readdirSync, statSync } from 'fs';
-import { join, basename, extname } from 'path';
+import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
+import { join, basename, extname, relative } from 'path';
 
 // Load aparavi-client via CJS — its ESM build has bare directory imports
 // that Node's strict ESM resolver doesn't support.
 const require = createRequire(import.meta.url);
 const { AparaviClient } = require('aparavi-client');
 
-const DOCS_DIR = join(import.meta.dirname, '..', 'docs');
-const PIPELINE_FILE = join(import.meta.dirname, '..', 'pipelines', 'rag-pipeline.json');
+const ROOT = join(import.meta.dirname, '..');
+const PIPELINE_FILE = join(ROOT, 'pipelines', 'rag-pipeline.json');
 
-function collectDocFiles(dir) {
+// Directories and extensions to index
+const CONTENT_SOURCES = [
+	{ dir: join(ROOT, 'docs'), exts: ['.md', '.mdx'] },
+	{ dir: join(ROOT, 'notebooks'), exts: ['.ipynb'] },
+	{ dir: join(ROOT, 'pipelines'), exts: ['.json'] },
+	{ dir: join(ROOT, 'src', 'components'), exts: ['.js', '.jsx'] },
+];
+
+// Standalone root-level files to index
+const ROOT_FILES = ['README.md', 'PRD.md'].map((f) => join(ROOT, f));
+
+/** Recursively collect files matching the given extensions. */
+function collectFiles(dir, exts) {
 	const files = [];
+	if (!existsSync(dir)) return files;
 	for (const entry of readdirSync(dir)) {
 		const full = join(dir, entry);
 		if (statSync(full).isDirectory()) {
-			files.push(...collectDocFiles(full));
-		} else if (['.md', '.mdx'].includes(extname(entry))) {
+			files.push(...collectFiles(full, exts));
+		} else if (exts.includes(extname(entry))) {
 			files.push(full);
 		}
 	}
 	return files;
+}
+
+/** Extract markdown + code cells from a Jupyter notebook into readable markdown text. */
+function notebookToMarkdown(filePath) {
+	const nb = JSON.parse(readFileSync(filePath, 'utf-8'));
+	const parts = [];
+	for (const cell of nb.cells || []) {
+		const source = (cell.source || []).join('');
+		if (!source.trim()) continue;
+		if (cell.cell_type === 'markdown') {
+			parts.push(source);
+		} else if (cell.cell_type === 'code') {
+			parts.push('```python\n' + source + '\n```');
+		}
+	}
+	return parts.join('\n\n');
+}
+
+/** Read a file and return { name, content } ready for upload.
+ *  Notebooks are converted to markdown; everything else is read as-is. */
+function readForUpload(filePath) {
+	const ext = extname(filePath);
+	// Use path relative to ROOT so filenames are unique across directories
+	const name = relative(ROOT, filePath).replace(/[\\/]/g, '--');
+
+	if (ext === '.ipynb') {
+		const md = notebookToMarkdown(filePath);
+		return { name: name.replace('.ipynb', '.md'), content: md, mime: 'text/markdown' };
+	}
+	const content = readFileSync(filePath, 'utf-8');
+	const mime = ['.md', '.mdx'].includes(ext) ? 'text/markdown' : 'text/plain';
+	return { name, content, mime };
+}
+
+/** Collect all content files from configured sources. */
+function collectAllContent() {
+	const allPaths = [];
+
+	for (const { dir, exts } of CONTENT_SOURCES) {
+		allPaths.push(...collectFiles(dir, exts));
+	}
+
+	for (const f of ROOT_FILES) {
+		if (existsSync(f)) allPaths.push(f);
+	}
+
+	// Exclude the rag-pipeline.json itself to avoid circular indexing
+	return allPaths.filter((p) => basename(p) !== 'rag-pipeline.json');
 }
 
 async function main() {
@@ -51,12 +112,15 @@ async function main() {
 		process.exit(1);
 	}
 
-	console.log('Collecting doc files...');
-	const docPaths = collectDocFiles(DOCS_DIR);
-	console.log(`Found ${docPaths.length} doc files`);
+	console.log('Collecting content files...');
+	const contentPaths = collectAllContent();
+	console.log(`Found ${contentPaths.length} content files:`);
+	for (const p of contentPaths) {
+		console.log(`  ${relative(ROOT, p)}`);
+	}
 
-	if (docPaths.length === 0) {
-		console.log('No doc files found. Skipping vectorization.');
+	if (contentPaths.length === 0) {
+		console.log('No content files found. Skipping vectorization.');
 		return;
 	}
 
@@ -84,11 +148,11 @@ async function main() {
 		});
 		console.log(`Pipeline started (token: ${token})`);
 
-		// Build File objects for upload
-		const files = docPaths.map((filePath) => {
-			const content = readFileSync(filePath);
-			const name = basename(filePath);
-			const file = new File([content], name, { type: 'text/markdown' });
+		// Build File objects for upload — notebooks are converted to markdown,
+		// other files are read as-is with appropriate MIME types.
+		const files = contentPaths.map((filePath) => {
+			const { name, content, mime } = readForUpload(filePath);
+			const file = new File([content], name, { type: mime });
 			return { file };
 		});
 
