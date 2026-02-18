@@ -1,9 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-
-const WEBHOOK_URL = 'https://eaas.aparavi.com/webhook';
-const WEBHOOK_PK = 'pk_b84673385c8f248a62df0c80e425010627de50a99818ed2875e2af9cacf926ef';
-const WEBHOOK_TOKEN = 'ae8d2d8cd7d046b515455f2e55f6acb06397101e50e5ea4794cd5156dfc0c4cf';
+import { WEBHOOK_URL, WEBHOOK_PK, WEBHOOK_TOKEN } from '@site/src/lib/webhook';
 
 export default function useChatbot() {
   const { siteConfig } = useDocusaurusContext();

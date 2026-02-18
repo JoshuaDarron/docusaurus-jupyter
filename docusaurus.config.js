@@ -61,6 +61,10 @@ const config = {
             position: 'left',
             label: 'Docs',
           },
+          {
+            type: 'search',
+            position: 'right',
+          },
         ],
       },
       footer: {

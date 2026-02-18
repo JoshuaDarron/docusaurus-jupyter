@@ -4,5 +4,7 @@ build
 .env
 .claude/settings.local.json
 
+static/search-index.json
+
 /.quarto/
 **/*.quarto_ipynb
