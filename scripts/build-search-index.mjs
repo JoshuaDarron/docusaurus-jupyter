@@ -63,9 +63,17 @@ function stripMarkdown(content) {
 
 function fileToUrl(filePath) {
   // docs/intro.md -> /docs/intro
-  // docs/notebooks/04-live-code-demo.mdx -> /docs/notebooks/04-live-code-demo
+  // docs/notebooks/04-live-code-demo.mdx -> /docs/notebooks/live-code-demo
+  // Docusaurus strips leading numeric prefixes (e.g. "04-") by default
   const rel = relative('.', filePath).replace(/\\/g, '/');
-  return '/' + rel.replace(/\.(mdx?|md)$/, '');
+  return (
+    '/' +
+    rel
+      .replace(/\.(mdx?|md)$/, '')
+      .split('/')
+      .map((seg) => seg.replace(/^\d+-/, ''))
+      .join('/')
+  );
 }
 
 async function main() {
